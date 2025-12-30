@@ -5,8 +5,6 @@ on:
     branches: ["main"]
     paths:
       - "ingestion-service/**"
-    tags:
-      - "ingestion-v*"
   pull_request:
     paths:
       - "ingestion-service/**"
@@ -35,19 +33,16 @@ jobs:
         run: pytest
 
       - name: Login to Docker Hub
-        if: startsWith(github.ref, 'refs/tags/')
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Build & Push Docker image
-        if: startsWith(github.ref, 'refs/tags/')
         working-directory: ingestion-service
         run: |
           IMAGE=${{ secrets.DOCKERHUB_USERNAME }}/ingestion-service
-          TAG=${GITHUB_REF##*/}
-          TAG=${TAG#ingestion-v}
+          TAG=$(echo $GITHUB_SHA | cut -c1-7)
           docker build -t $IMAGE:$TAG -t $IMAGE:latest .
           docker push $IMAGE:$TAG
           docker push $IMAGE:latest

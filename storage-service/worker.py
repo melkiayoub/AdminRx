@@ -71,3 +71,4 @@ def callback(ch, method, properties, body):
 print("🚀 Storage Service is waiting for messages...")
 channel.basic_consume(queue="pdf_generated", on_message_callback=callback)
 channel.start_consuming()
+##testing

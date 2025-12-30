@@ -27,3 +27,4 @@ def callback(ch, method, properties, body):
 print("🚀 Notification Service is waiting for messages...")
 channel.basic_consume(queue="pdf_stored", on_message_callback=callback)
 channel.start_consuming()
+#####test

@@ -2,3 +2,4 @@ fastapi
 uvicorn
 pika
 prometheus-fastapi-instrumentator
+##testing the new pipelines
