@@ -1,0 +1,53 @@
+name: Ingestion Service CI
+
+on:
+  push:
+    branches: ["main"]
+    paths:
+      - "ingestion-service/**"
+    tags:
+      - "ingestion-v*"
+  pull_request:
+    paths:
+      - "ingestion-service/**"
+
+jobs:
+  test-build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        working-directory: ingestion-service
+        run: |
+          pip install -r requirements.txt
+          pip install pytest
+
+      - name: Run unit tests
+        working-directory: ingestion-service
+        run: pytest
+
+      - name: Login to Docker Hub
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build & Push Docker image
+        if: startsWith(github.ref, 'refs/tags/')
+        working-directory: ingestion-service
+        run: |
+          IMAGE=${{ secrets.DOCKERHUB_USERNAME }}/ingestion-service
+          TAG=${GITHUB_REF##*/}
+          TAG=${TAG#ingestion-v}
+          docker build -t $IMAGE:$TAG -t $IMAGE:latest .
+          docker push $IMAGE:$TAG
+          docker push $IMAGE:latest

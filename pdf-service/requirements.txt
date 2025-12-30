@@ -1,0 +1,5 @@
+pika
+reportlab
+minio
+
+weasyprint
