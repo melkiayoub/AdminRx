@@ -109,3 +109,4 @@ channel.basic_consume(queue="pdf_requests", on_message_callback=callback)
 
 print("🚀 PDF Service is waiting for messages...")
 channel.start_consuming()
+##testing

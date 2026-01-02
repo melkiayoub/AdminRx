@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: C:\windows\system32\Kompose.exe convert --out k8s/
+    kompose.version: 1.37.0 (fb0539e64)
+  labels:
+    io.kompose.service: ingestion-service
+  name: ingestion-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: ingestion-service
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: C:\windows\system32\Kompose.exe convert --out k8s/
+        kompose.version: 1.37.0 (fb0539e64)
+      labels:
+        io.kompose.service: ingestion-service
+    spec:
+      containers:
+        - image: ayoubmk02/ingestion-service
+          name: ingestion-service
+          ports:
+            - containerPort: 8000
+              protocol: TCP
+      restartPolicy: Always
