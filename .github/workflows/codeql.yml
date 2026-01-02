@@ -1,0 +1,49 @@
+name: CodeQL Security Scan
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+  schedule:
+    - cron: "0 2 * * 1" # weekly scan (Monday 02:00)
+
+jobs:
+  analyze:
+    name: Analyze with CodeQL
+    runs-on: ubuntu-latest
+
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+
+    strategy:
+      fail-fast: false
+      matrix:
+        service:
+          - ingestion-service
+          # add others when needed
+          # - pdf-service
+          # - notification-service
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: python
+          paths: ${{ matrix.service }}
+
+      # OPTIONAL but recommended if dependencies exist
+      - name: Install dependencies
+        working-directory: ${{ matrix.service }}
+        run: |
+          if [ -f requirements.txt ]; then
+            pip install -r requirements.txt
+          fi
+
+      - name: Run CodeQL Analysis
+        uses: github/codeql-action/analyze@v3
