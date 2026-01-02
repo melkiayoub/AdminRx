@@ -2,4 +2,5 @@ pika
 reportlab
 minio
 
+
 weasyprint
